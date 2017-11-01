@@ -1,42 +1,60 @@
 //drawer = function(data, indata){
-  var margin = {top: 10, right: 10, bottom: 10, left: 10},
-      width = 600 - margin.left - margin.right,
-      height = 150 - margin.top - margin.bottom,
+  var margin = {top: 10, right: 40, bottom: 10, left: 40},
+      width = 800 - margin.left - margin.right,
+      height = 200 - margin.top - margin.bottom,
       svg = d3.select(".plot")
                  .append("svg")
                  .attr("preserveAspectRatio", "xMinYMin meet")
                  .attr("viewBox","0 5 " + (width + 50)  + " " + (height+50))
                    //class to make it responsive
                  .classed("svg-content-responsive", true);
+    
 
+
+    // Setup the tool tip.  Note that this is just one example, and that many styling options are available.
+    // See original documentation for more details on styling: http://labratrevenge.com/d3-tip/
+    /*var tool_tip = d3.tip()
+      .attr("class", "d3-tip")
+      .direction("s")
+      .offset([-8, 0])
+      .html(function(d) { return "Radius: "; });
+*/
+    tool_tip = d3.tip()
+      .attr("class", "d3-tip")
+      .html(function(d) { return d.x; })
+      .direction("s")
+      .offset([4, 0]); 
+    svg.call(tool_tip);
+
+  // skapa
    var defs = svg.append("defs");
 
    defs.append('pattern')
-     .attr("id", "dog")
+     .attr("id", "ernstberger")
      .attr("width", 1)
      .attr("height", 1)
      .append("svg:image")
-     .attr("xlink:href", "http://cdn2-www.dogtime.com/assets/uploads/2010/12/senior-dog-2.jpg")
-     .attr("width", 50)
-     .attr("height", 50)
-     .attr("y", -20)
-     .attr("x", -20);
+     .attr("xlink:href", "images/ernstberger.PNG")
+     .attr("width", 20)
+     .attr("height", 20)
+     .attr("y", -0)
+     .attr("x", -0);
 
    defs.append('pattern')
-     .attr("id", "cat")
+     .attr("id", "helikopter")
      .attr("width", 1)
      .attr("height", 1)
      .append("svg:image")
-     .attr("xlink:href", "https://s-media-cache-ak0.pinimg.com/736x/92/9d/3d/929d3d9f76f406b5ac6020323d2d32dc.jpg")
-     .attr("width", 120)
-     .attr("height", 120)
-     .attr("x", -30)
-     .attr("y", -10);
+     .attr("xlink:href", "images/helikopter.PNG")
+     .attr("width", 20)
+     .attr("height", 20)
+     .attr("x", -0)
+     .attr("y", -0);
 
   var formatValue = d3.format(",d");
 
   var x = d3.scaleLinear()
-      .rangeRound([0, width]);
+      .rangeRound([0, width-50]);
 
   var y = d3.scaleLinear()
       .rangeRound([height, 0]);
@@ -92,7 +110,7 @@
 
   // gridlines in y axis function
   function make_x_gridlines() {
-      return d3.axisBottom(x)
+      return d3.axisTop(x)
           .ticks(5)
   }
 
@@ -101,7 +119,7 @@
     .attr("class", "grid")
     .attr("transform", "translate(0," + height + ")")
     .call(make_x_gridlines()
-        .tickSize(-height)
+        .tickSize(height- margin.top)
         //.tickFormat(".3")
     )
 
@@ -109,10 +127,11 @@
         .data(linedata)
         .enter()
         .append("line")
-        .style("stroke", "orange")
+        .style("stroke", function(d){ return d.color;})
         .style("opacity", 1)
         .style("stroke-width", 7)
         .style("stroke-linecap", "round")
+        .style("shape-rendering", "geometricPrecision")
         .attr("x1", function(d) {return x(d.start);})
         .attr("y1", function(d) {return y((d.offset-2)/5 + 2);})
         .attr("x2", function(d) {return x(d.stop);})
@@ -120,7 +139,9 @@
 
         //remove horixontal line
         d3.select(".domain").remove()
-        d3.selectAll(".tick").selectAll("line").style("stroke-dasharray", "1,1")
+        d3.selectAll(".tick").selectAll("line")
+          .style("stroke-dasharray", "1,1")
+          .style("stroke-width", "0.5")
 
         var cell = g.append("g")
             .attr("class", "cells")
@@ -139,8 +160,10 @@
           .attr("cx", function(d) { return d.x; })
           .attr("cy", function(d) { return d.y; })
           .attr("fill", function(d,i){
-     return i%2 === 0 ? "url(#dog)" : "url(#cat)"
-     });
+     return i%2 === 0 ? "url(#ernstberger)" : "url(#helikopter)"
+     })
+      .on('mouseover', tool_tip.show)
+      .on('mouseout', tool_tip.hide);
 
       cell.append("title")
           .text(function(d) { return d.id + "\n" + formatValue(d.value); });

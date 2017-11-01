@@ -25,15 +25,24 @@
   pointer-events: all;
 }
 
+.cells circle {
+  stroke: black;
+  stroke-width: 1;
+  shape-rendering: auto;
+}
+
 .cells :hover circle {
-  stroke: red;
+  stroke: #E94953;
+  stroke-width: 1;
+  shape-rendering: auto;
 }
 
 .d3-tip {
   line-height: 1;
   font-weight: bold;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
+  font-size: 4px;
+  padding: 5px;
+  background: #e74c3c;
   color: #fff;
   border-radius: 2px;
 }
@@ -42,11 +51,11 @@
 .d3-tip:after {
   box-sizing: border-box;
   display: inline;
-  font-size: 10px;
+  font-size: 6px;
   width: 100%;
   line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
+  color: #e74c3c;
+  content: "\25B2";
   position: absolute;
   text-align: center;
 }
@@ -58,15 +67,25 @@
   left: 0;
 }
 
+/* Style northward tooltips differently */
+.d3-tip.s:after {
+  margin: -4px 0 0 0;
+  top: 0%;
+  left: 0;
+}
+
 </style>
 
 <head>
   <title>Time story</title>
   <meta charset="UTF-8">
+  <script type="text/javascript" src="src/jquery-3.1.1.min.js"></script>
+  <link href = "src/bootstrap.3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <script type="text/javascript" src="src/bootstrap.3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-  <div class = "plot"> </div>
+  <div class = "plot col-md-8 col-md-offset-2"> </div>
     <script>
       data = [{id:"aa", value:3},
               {id:"bb", value:54},
@@ -78,13 +97,13 @@
               {id:"bg", value:144}
             ]
 
-      linedata = [{id:"aa", offset:1, start:0, stop:33},
-                  {id:"bb", offset:2, start:0, stop:400},
-                  {id:"bb", offset:3, start:25, stop:300}
+      linedata = [{id:"aa", offset:1, start:0, stop:33, color: '1abc9c'},
+                  {id:"bb", offset:2, start:0, stop:400, color: '2ecc71'},
+                  {id:"bb", offset:3, start:25, stop:300, color: '3498db'}
             ]
     </script>
     <script type="text/javascript" src="src/d3/d3.min.js"></script>
-    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script src="src/d3-tip.js"></script>
     <script type="text/javascript" src="dots.js"></script>
     <script>//drawer(data, linedata)</script>
 </body>
