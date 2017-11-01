@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #030;
+  shape-rendering: crispEdges;
+  stroke-dasharray: "5,5"
+}
+
+.tick line {
+  fill: red;
+  stroke: #030;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.cells path {
+  fill: none;
+  pointer-events: all;
+}
+
+.cells :hover circle {
+  stroke: red;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+</style>
+
+<head>
+  <title>Time story</title>
+  <meta charset="UTF-8">
+</head>
+
+<body>
+  <div class = "plot"> </div>
+    <script>
+      data = [{id:"aa", value:3},
+              {id:"bb", value:54},
+              {id:"bb", value:345},
+              {id:"bc", value:45},
+              {id:"bs", value:5},
+              {id:"br", value:43},
+              {id:"b2", value:234},
+              {id:"bg", value:144}
+            ]
+
+      linedata = [{id:"aa", offset:1, start:0, stop:33},
+                  {id:"bb", offset:2, start:0, stop:400},
+                  {id:"bb", offset:3, start:25, stop:300}
+            ]
+    </script>
+    <script type="text/javascript" src="src/d3/d3.min.js"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script type="text/javascript" src="dots.js"></script>
+    <script>//drawer(data, linedata)</script>
+</body>
+</html>
