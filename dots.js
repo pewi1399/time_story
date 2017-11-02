@@ -11,7 +11,7 @@
 
     tool_tip = d3.tip()
       .attr("class", "d3-tip")
-      .html(function(d) { return d.x + "dgdfgdg sfsdfs <br/>  sfsdfsdf dfsfs sf"; })
+      .html(function(d) { return d.Date + ": " + d.event; })
       .direction("s")
       .offset([8, 0]);
     svg.call(tool_tip);
@@ -60,6 +60,10 @@
 
   // convert to date
   indexdata.forEach(function(d){ d.Date = parseTime(d.Date)})
+  eventdata.forEach(function(d){
+    d.Date = d.date;
+    d.date = parseTime(d.date);
+  })
 
   var indexes = ["Allra_Strategi_Lagom", "Allra_Strategi_Modig", "Handelsbanken_Global"].map(function(id) {
     return {
@@ -97,8 +101,8 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   x.domain(d3.extent(data, function(d) { return d.value; }));
   y.domain(d3.extent(linedata, function(d) { return d.offset; }));
 
-  var simulation = d3.forceSimulation(data)
-      .force("x", d3.forceX(function(d) { return x(d.value); }).strength(1))
+  var simulation = d3.forceSimulation(eventdata)
+      .force("x", d3.forceX(function(d) { return x_time(d.date); }).strength(1))
       .force("y", d3.forceY(height / 2))
       .force("collide", d3.forceCollide(21))
       .stop();
@@ -123,7 +127,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         .extent([[-margin.left, -margin.top], [width + margin.right, height + margin.top]])
         .x(function(d) { return d.x; })
         .y(function(d) { return d.y; })
-      .polygons(data).map(function(d){
+      .polygons(eventdata).map(function(d){
         return d.data;
       }
     )
