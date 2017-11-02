@@ -201,9 +201,10 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
           .attr("cy", function(d) { return d.y; })
           .attr("fill", function(d,i){
      return i%2 === 0 ? "url(#ernstberger)" : "url(#helikopter)"
-     })
+    })
       .on('mouseover', tool_tip.show)
-      .on('mouseout', tool_tip.hide);
+      .on('mouseout', tool_tip.hide)
+      .on("click", function(d){window.open(d.sourcelink) });
 
       //cell.append("title")
       //    .text(function(d) { return d.id + "\n" + formatValue(d.value); });
