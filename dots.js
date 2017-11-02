@@ -1,29 +1,19 @@
 //drawer = function(data, indata){
   var margin = {top: 10, right: 40, bottom: 10, left: 40},
       width = 800 - margin.left - margin.right,
-      height = 200 - margin.top - margin.bottom,
+      height = 300 - margin.top - margin.bottom,
       svg = d3.select(".plot")
                  .append("svg")
                  .attr("preserveAspectRatio", "xMinYMin meet")
                  .attr("viewBox","0 5 " + (width + 50)  + " " + (height+50))
                    //class to make it responsive
                  .classed("svg-content-responsive", true);
-    
 
-
-    // Setup the tool tip.  Note that this is just one example, and that many styling options are available.
-    // See original documentation for more details on styling: http://labratrevenge.com/d3-tip/
-    /*var tool_tip = d3.tip()
-      .attr("class", "d3-tip")
-      .direction("s")
-      .offset([-8, 0])
-      .html(function(d) { return "Radius: "; });
-*/
     tool_tip = d3.tip()
       .attr("class", "d3-tip")
-      .html(function(d) { return d.x; })
+      .html(function(d) { return d.x + "dgdfgdg sfsdfs <br/>  sfsdfsdf dfsfs sf"; })
       .direction("s")
-      .offset([4, 0]); 
+      .offset([8, 0]);
     svg.call(tool_tip);
 
   // skapa
@@ -35,8 +25,8 @@
      .attr("height", 1)
      .append("svg:image")
      .attr("xlink:href", "images/ernstberger.PNG")
-     .attr("width", 20)
-     .attr("height", 20)
+     .attr("width", 40)
+     .attr("height", 40)
      .attr("y", -0)
      .attr("x", -0);
 
@@ -46,8 +36,8 @@
      .attr("height", 1)
      .append("svg:image")
      .attr("xlink:href", "images/helikopter.PNG")
-     .attr("width", 20)
-     .attr("height", 20)
+     .attr("width", 40)
+     .attr("height", 40)
      .attr("x", -0)
      .attr("y", -0);
 
@@ -56,6 +46,47 @@
   var x = d3.scaleLinear()
       .rangeRound([0, width-50]);
 
+  //Setup time scale
+  var parseTime = d3.timeParse("%Y-%m-%d");
+  var x_time = d3.scaleTime()
+      .rangeRound([0, width-50]);
+
+  var y_index = d3.scaleLinear()
+      .rangeRound([height, 0]);
+
+  var line = d3.line()
+      .x(function(d) { return x_time(d.date); })
+      .y(function(d) { return y_index(d.index); });
+
+  // convert to date
+  indexdata.forEach(function(d){ d.Date = parseTime(d.Date)})
+
+  var indexes = ["Allra_Strategi_Lagom", "Allra_Strategi_Modig", "Handelsbanken_Global"].map(function(id) {
+    return {
+      id: id,
+      values: indexdata.map(function(d) {
+        if( typeof d[id] == "undefined"){
+          return undefined
+        }else{
+        return {date: d.Date, index: d[id]};
+      }
+    })
+  }})
+
+indexes.forEach(function(d){
+d.values = d.values.filter(function(d){return typeof d != "undefined"})
+})
+
+
+  //scale for points w/o time
+  x_time.domain(d3.extent(indexdata, function(d) { return d.Date; }));
+
+  y_index.domain([
+    d3.min(indexes, function(c) { return d3.min(c.values, function(d) { return d.index; }); }),
+    d3.max(indexes, function(c) { return d3.max(c.values, function(d) { return d.index; }); })
+  ]);
+
+  //scale for boardmember lines
   var y = d3.scaleLinear()
       .rangeRound([height, 0]);
 
@@ -69,7 +100,7 @@
   var simulation = d3.forceSimulation(data)
       .force("x", d3.forceX(function(d) { return x(d.value); }).strength(1))
       .force("y", d3.forceY(height / 2))
-      .force("collide", d3.forceCollide(11))
+      .force("collide", d3.forceCollide(21))
       .stop();
 
   for (var i = 0; i < 300; ++i) simulation.tick();
@@ -97,20 +128,9 @@
       }
     )
 
-
-
-//  var cities = data.columns.slice(1).map(function(id) {
-//    return {
-//      id: id,
-//      values: data.map(function(d) {
-//        return {date: d.date, temperature: d[id]};
-//      })
-//    };
-//  });
-
   // gridlines in y axis function
   function make_x_gridlines() {
-      return d3.axisTop(x)
+      return d3.axisTop(x_time)
           .ticks(5)
   }
 
@@ -123,13 +143,29 @@
         //.tickFormat(".3")
     )
 
+  var index = g.selectAll(".index")
+  .data(indexes)
+  .enter().append("g")
+    .attr("class", "index");
+
+  index.append("path")
+      .attr("class", "indexline")
+      .attr("d", function(d) { return line(d.values); })
+      .style("stroke", function(d) {
+        if(d.id == "Handelsbanken_Global"){
+        return "3498db";
+       } else {
+          return "#e74c3c";
+        }
+      });
+
     g.selectAll(".lines")
         .data(linedata)
         .enter()
         .append("line")
         .style("stroke", function(d){ return d.color;})
         .style("opacity", 1)
-        .style("stroke-width", 7)
+        .style("stroke-width", 9)
         .style("stroke-linecap", "round")
         .style("shape-rendering", "geometricPrecision")
         .attr("x1", function(d) {return x(d.start);})
@@ -141,7 +177,7 @@
         d3.select(".domain").remove()
         d3.selectAll(".tick").selectAll("line")
           .style("stroke-dasharray", "1,1")
-          .style("stroke-width", "0.5")
+          .style("stroke-width", "1")
 
         var cell = g.append("g")
             .attr("class", "cells")
@@ -152,7 +188,7 @@
       //cell.append("path")
       //    .attr("d", function(d) { return "M" + d.join("L") + "Z"; });
       cell.append("circle")
-          .attr("r", 10)
+          .attr("r", 20)
           //.attr("cy", 1000)
           //.transition()
           //.delay(1000)
@@ -165,8 +201,8 @@
       .on('mouseover', tool_tip.show)
       .on('mouseout', tool_tip.hide);
 
-      cell.append("title")
-          .text(function(d) { return d.id + "\n" + formatValue(d.value); });
+      //cell.append("title")
+      //    .text(function(d) { return d.id + "\n" + formatValue(d.value); });
 
 
 
