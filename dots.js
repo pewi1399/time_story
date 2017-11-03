@@ -204,10 +204,6 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   var y = d3.scaleLinear()
       .rangeRound([height, 0]);
 
-  var g = svg.append("g")
-      .attr("class", "container")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
   var context = svg2.append("g")
       .attr("class", "container")
       .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
@@ -222,7 +218,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
       .force("collide", d3.forceCollide(21))
       .stop();
 
-  for (var i = 0; i < 300; ++i) simulation.tick();
+  for (var i = 0; i <100; ++i) simulation.tick();
 
 // skapa brush och zoom
   var brush = d3.brushX()
@@ -234,6 +230,17 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
       .translateExtent([[0, 0], [width, height]])
       .extent([[0, 0], [width, height]])
       .on("zoom", zoomed);
+
+  svg.append("rect")
+      .attr("class", "zoom")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .call(zoom);
+
+  var g = svg.append("g")
+      .attr("class", "container")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
   //g.append("g")
@@ -362,6 +369,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         //.transition()
         //.delay(1000)
         //.duration(1500)
+        .attr("class", "blobs")
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
         .attr("fill", function(d){
@@ -380,7 +388,18 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         x.domain(s.map(x_time2.invert, x_time2));
         //g.select(".area").attr("d", area);
         //g.select(".axis--x").call(xAxis);
+        var simulation = d3.forceSimulation(eventdata)
+            .force("x", d3.forceX(function(d) { return x_time(d.date); }).strength(1))
+            .force("y", d3.forceY(height / 2))
+            .force("collide", d3.forceCollide(21))
+            .stop();
 
+        for (var i = 0; i < 100; ++i) simulation.tick();
+
+        d3.selectAll("circle").attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; });
+
+        g.selectAll(".indexline").attr("d", function(d) { return line(d.values); })
         g.select(".grid").call(make_x_gridlines()
             .tickSize(height- margin.top)
             //.tickFormat(".3")
@@ -398,9 +417,22 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
         var t = d3.event.transform;
         x_time.domain(t.rescaleX(x_time2).domain());
+
+        var simulation = d3.forceSimulation(eventdata)
+            .force("x", d3.forceX(function(d) { return x_time(d.date); }).strength(1))
+            .force("y", d3.forceY(height / 2))
+            .force("collide", d3.forceCollide(21))
+            .stop();
+
+        for (var i = 0; i < 100; ++i) simulation.tick();
         //g.select(".area").attr("d", area);
         //g.select(".axis--x").call(xAxis);
+        //cell.attr("cx", function(d) { return d.x; })
+        //    .attr("cy", function(d) { return d.y; });
+        d3.selectAll("circle").attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; });
 
+        g.selectAll(".indexline").attr("d", function(d) { return line(d.values); })
         g.select(".grid").call(make_x_gridlines()
             .tickSize(height- margin.top)
             //.tickFormat(".3")
@@ -409,15 +441,11 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         d3.selectAll(".tick").selectAll("line")
           .style("stroke-dasharray", "1,1")
           .style("stroke-width", "1");
+
         context.select(".brush").call(brush.move, x_time.range().map(t.invertX, t));
       }
 
-      svg.append("rect")
-          .attr("class", "zoom")
-          .attr("width", width)
-          .attr("height", height)
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-          .call(zoom);
+
 
 
 
