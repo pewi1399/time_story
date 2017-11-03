@@ -139,6 +139,50 @@
      .attr("x", -0)
      .attr("y", -0);
 
+   defs.append('pattern')
+     .attr("id", "dubai")
+     .attr("width", 1)
+     .attr("height", 1)
+     .append("svg:image")
+     .attr("xlink:href", "images/dubai.jpg")
+     .attr("width", 40)
+     .attr("height", 40)
+     .attr("x", -0)
+     .attr("y", -0);
+
+   defs.append('pattern')
+     .attr("id", "oak")
+     .attr("width", 1)
+     .attr("height", 1)
+     .append("svg:image")
+     .attr("xlink:href", "images/oak.jpg")
+     .attr("width", 40)
+     .attr("height", 40)
+     .attr("x", -0)
+     .attr("y", -0);
+
+   defs.append('pattern')
+     .attr("id", "deloitte")
+     .attr("width", 1)
+     .attr("height", 1)
+     .append("svg:image")
+     .attr("xlink:href", "images/deloitte.jpg")
+     .attr("width", 40)
+     .attr("height", 40)
+     .attr("x", -0)
+     .attr("y", -0);
+
+   defs.append('pattern')
+     .attr("id", "norge")
+     .attr("width", 1)
+     .attr("height", 1)
+     .append("svg:image")
+     .attr("xlink:href", "images/norge.png")
+     .attr("width", 40)
+     .attr("height", 40)
+     .attr("x", -0)
+     .attr("y", -0);
+
   var formatValue = d3.format(",d");
 
   var x = d3.scaleLinear()
@@ -273,8 +317,8 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   }
 
   function make_x_gridlines2() {
-      return d3.axisTop(x_time2)
-          .ticks(5)
+      return d3.axisBottom(x_time2)
+          .ticks(10)
   }
 
   // add the X gridlines
@@ -287,10 +331,10 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
     )
 
   context.append("g")
-      .attr("class", "grid")
+      .attr("class", "grid2")
       .attr("transform", "translate(0," + height2 + ")")
       .call(make_x_gridlines2()
-          .tickSize(height2- margin2.top)
+          //.tickSize(height2- margin2.top)
           //.tickFormat(".3")
       )
 
@@ -350,7 +394,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 
 
     //remove horixontal line
-    d3.selectAll(".domain").remove()
+    //d3.selectAll(".domain").remove()
     d3.selectAll(".tick").selectAll("line")
       .style("stroke-dasharray", "1,1")
       .style("stroke-width", "1")
