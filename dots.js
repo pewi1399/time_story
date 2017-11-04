@@ -191,9 +191,9 @@
   //Setup time scale
   var parseTime = d3.timeParse("%Y-%m-%d");
   var x_time = d3.scaleTime()
-      .rangeRound([0, width-50]);
+      .rangeRound([0, width]);
   var x_time2 = d3.scaleTime()
-      .rangeRound([0, width-50]);
+      .rangeRound([0, width]);
 
   var y_index = d3.scaleLinear()
       .rangeRound([height, 0]);
@@ -275,7 +275,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 
 // skapa brush och zoom
   var brush = d3.brushX()
-      .extent([[0, 0], [width-margin.right, height2]])
+      .extent([[0, 0], [width, height2]])
       .on("start brush end", brushed);
 
   var zoom = d3.zoom()
@@ -293,7 +293,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 
   var g = svg.append("g")
       .attr("class", "container")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("transform", "translate(" + margin.left+ "," + margin.top + ")");
 
 
   //g.append("g")
@@ -350,7 +350,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   context.append("g")
     .attr("class", "brush")
     .call(brush)
-    .call(brush.move, [0, 300])
+    //.call(brush.move, [0, 300])
     .call(brush.move, [
       x_time2(parseTime("2017-01-20")),
       x_time2(parseTime("2017-05-01"))
