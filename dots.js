@@ -267,7 +267,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 // skapa brush och zoom
   var brush = d3.brushX()
       .extent([[0, 0], [width, height2]])
-      .on("brush end", brushed);
+      .on("start brush end", brushed);
 
   var zoom = d3.zoom()
       .scaleExtent([1, Infinity])
@@ -313,7 +313,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   // gridlines in y axis function
   function make_x_gridlines() {
       return d3.axisTop(x_time)
-          .ticks(5)
+          .ticks(10)
   }
 
   function make_x_gridlines2() {
@@ -341,7 +341,12 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   context.append("g")
     .attr("class", "brush")
     .call(brush)
-    .call(brush.move, x_time.range());
+    .call(brush.move, [0, 300])
+    .call(brush.move, [
+      x_time2(parseTime("2017-01-20")),
+      x_time2(parseTime("2017-05-01"))
+    ]
+    );
 
 
   var index = g.selectAll(".index")
@@ -395,7 +400,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 
     //remove horixontal line
     //d3.selectAll(".domain").remove()
-    d3.selectAll(".tick").selectAll("line")
+    d3.select(".grid").selectAll(".tick").selectAll("line")
       .style("stroke-dasharray", "1,1")
       .style("stroke-width", "1")
 
@@ -429,7 +434,10 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
       function brushed() {
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
         var s = d3.event.selection || x_time2.range();
-        x.domain(s.map(x_time2.invert, x_time2));
+        x_time.domain(
+
+          s.map(x_time2.invert, x_time2)
+        );
         //g.select(".area").attr("d", area);
         //g.select(".axis--x").call(xAxis);
         var simulation = d3.forceSimulation(eventdata)
@@ -448,10 +456,12 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
             .tickSize(height- margin.top)
             //.tickFormat(".3")
         )
-        d3.selectAll(".domain").remove();
-        d3.selectAll(".tick").selectAll("line")
+        d3.select(".grid").selectAll(".domain").remove();
+        d3.select(".grid").selectAll(".tick").selectAll("line")
           .style("stroke-dasharray", "1,1")
           .style("stroke-width", "1");
+
+
         svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
             .scale(width / (s[1] - s[0]))
             .translate(-s[0], 0));
@@ -481,12 +491,12 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
             .tickSize(height- margin.top)
             //.tickFormat(".3")
         );
-        d3.selectAll(".domain").remove();
-        d3.selectAll(".tick").selectAll("line")
+        d3.select(".grid").selectAll(".domain").remove();
+        d3.select(".grid").selectAll(".tick").selectAll("line")
           .style("stroke-dasharray", "1,1")
           .style("stroke-width", "1");
 
-        context.select(".brush").call(brush.move, x_time.range().map(t.invertX, t));
+        //context.select(".brush").call(brush.move, x_time.range().map(t.invertX, t));
       }
 
 
