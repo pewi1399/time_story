@@ -1,7 +1,7 @@
 //drawer = function(data, indata){
 var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 110, left: 40},
-    margin2 = {top: 430, right: 20, bottom: 30, left: 40},
+    margin = {top: 20, right: 40, bottom: 110, left: 70},
+    margin2 = {top: 530, right: 40, bottom: 30, left: 70},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom,
     height2 = +svg.attr("height") - margin2.top - margin2.bottom;
@@ -21,7 +21,7 @@ var svg = d3.select("svg"),
      .attr("width", 1)
      .attr("height", 1)
      .append("svg:image")
-     .attr("xlink:href", "images/ernstberger.PNG")
+     .attr("xlink:href", "images/ernstberger.jpg")
      .attr("width", 40)
      .attr("height", 40)
      .attr("y", -0)
@@ -32,18 +32,18 @@ var svg = d3.select("svg"),
      .attr("width", 1)
      .attr("height", 1)
      .append("svg:image")
-     .attr("xlink:href", "images/helikopter.PNG")
-     .attr("width", 40)
-     .attr("height", 40)
-     .attr("x", -0)
-     .attr("y", -0);
+     .attr("xlink:href", "images/helikopter.jpg")
+     .attr("width", 60)
+     .attr("height", 60)
+     .attr("x", -16)
+     .attr("y", -10);
 
    defs.append('pattern')
      .attr("id", "bodstrom")
      .attr("width", 1)
      .attr("height", 1)
      .append("svg:image")
-     .attr("xlink:href", "images/bodstrom.PNG")
+     .attr("xlink:href", "images/bodstrom.jpg")
      .attr("width", 40)
      .attr("height", 40)
      .attr("x", -0)
@@ -55,10 +55,10 @@ var svg = d3.select("svg"),
      .attr("height", 1)
      .append("svg:image")
      .attr("xlink:href", "images/kammarratten.PNG")
-     .attr("width", 40)
-     .attr("height", 40)
-     .attr("x", -0)
-     .attr("y", -0);
+     .attr("width", 60)
+     .attr("height", 60)
+     .attr("x", -6)
+     .attr("y", -10);
 
    defs.append('pattern')
      .attr("id", "lindso")
@@ -78,10 +78,10 @@ var svg = d3.select("svg"),
      .attr("height", 1)
      .append("svg:image")
      .attr("xlink:href", "images/pensionsmyndigheten.PNG")
-     .attr("width", 40)
-     .attr("height", 40)
-     .attr("x", -0)
-     .attr("y", -0);
+     .attr("width", 60)
+     .attr("height", 60)
+     .attr("x", -5)
+     .attr("y", -10);
 
    defs.append('pattern')
      .attr("id", "kronofogden")
@@ -133,9 +133,9 @@ var svg = d3.select("svg"),
      .attr("height", 1)
      .append("svg:image")
      .attr("xlink:href", "images/dubai.jpg")
-     .attr("width", 40)
-     .attr("height", 40)
-     .attr("x", -0)
+     .attr("width", 50)
+     .attr("height", 50)
+     .attr("x", -10)
      .attr("y", -0);
 
    defs.append('pattern')
@@ -166,6 +166,17 @@ var svg = d3.select("svg"),
      .attr("height", 1)
      .append("svg:image")
      .attr("xlink:href", "images/norge.png")
+     .attr("width", 60)
+     .attr("height", 60)
+     .attr("x", -4)
+     .attr("y", -8);
+
+   defs.append('pattern')
+     .attr("id", "svd")
+     .attr("width", 1)
+     .attr("height", 1)
+     .append("svg:image")
+     .attr("xlink:href", "images/svd.jpg")
      .attr("width", 40)
      .attr("height", 40)
      .attr("x", -0)
@@ -225,7 +236,8 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
     d3.max(
       [
         d3.max(indexdata, function(d) { return d.Date; }),
-          d3.max(eventdata, function(d) { return d.Date; })
+        parseTime("2017-12-06")
+          //d3.max(eventdata, function(d) { return parseTime(d.Date); })
         ]
       )
     ]
@@ -245,11 +257,31 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   var y = d3.scaleLinear()
       .rangeRound([height, 0]);
 
+
+
   svg.append("defs").append("clipPath")
       .attr("id", "clip")
     .append("rect")
       .attr("width", width)
       .attr("height", height);
+
+  // skapa brush och zoom
+    var brush = d3.brushX()
+        .extent([[0, 0], [width, height2]])
+        .on("brush end", brushed);
+
+    var zoom = d3.zoom()
+        .scaleExtent([1, Infinity])
+        .translateExtent([[0, 0], [width, height]])
+        .extent([[0, 0], [width, height]])
+        .on("zoom", zoomed);
+
+    svg.append("rect")
+        .attr("class", "zoom")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .call(zoom);
 
   var focus = svg.append("g")
       .attr("class", "focus")
@@ -271,23 +303,9 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 
   for (var i = 0; i <100; ++i) simulation.tick();
 
-// skapa brush och zoom
-  var brush = d3.brushX()
-      .extent([[0, 0], [width, height2]])
-      .on("brush end", brushed);
 
-  var zoom = d3.zoom()
-      .scaleExtent([1, Infinity])
-      .translateExtent([[0, 0], [width, height]])
-      .extent([[0, 0], [width, height]])
-      .on("zoom", zoomed);
 
-  svg.append("rect")
-      .attr("class", "zoom")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      .call(zoom);
+
   //g.append("g")
   //    .attr("class", "axis axis--x")
   //    .attr("transform", "translate(0," + height + ")")
@@ -430,6 +448,9 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         .on('mouseout', tool_tip.hide)
         .on("click", function(d){window.open(d.sourcelink)});
 
+
+
+
       //cell.append("title")
       //    .text(function(d) { return d.id + "\n" + formatValue(d.value); });
 
@@ -457,7 +478,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
             .tickSize(height- margin.top)
             //.tickFormat(".3")
         )
-        //d3.select(".grid").selectAll(".domain").remove();
+        d3.select(".grid").selectAll(".domain").remove();
         d3.select(".grid").selectAll(".tick").selectAll("line")
           .style("stroke-dasharray", "1,1")
           .style("stroke-width", "1");
@@ -492,7 +513,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
             .tickSize(height- margin.top)
             //.tickFormat(".3")
         );
-        //d3.select(".grid").selectAll(".domain").remove();
+        d3.select(".grid").selectAll(".domain").remove();
         d3.select(".grid").selectAll(".tick").selectAll("line")
           .style("stroke-dasharray", "1,1")
           .style("stroke-width", "1");
