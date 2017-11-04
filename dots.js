@@ -232,8 +232,17 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 })
 
   //scale for points w/o time
-  x_time.domain(d3.extent(indexdata, function(d) { return d.Date; }));
-  x_time2.domain(d3.extent(indexdata, function(d) { return d.Date; }));
+  x_time.domain(
+    [d3.extent(indexdata, function(d) { return d.Date; })[0],
+    d3.max(
+      [
+        d3.max(indexdata, function(d) { return d.Date; }),
+          d3.max(eventdata, function(d) { return d.Date; })
+        ]
+      )
+    ]
+  );
+  x_time2.domain(x_time.domain());
 
   y_index.domain([
     d3.min(indexes, function(c) { return d3.min(c.values, function(d) { return d.index; }); }),
@@ -266,7 +275,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 
 // skapa brush och zoom
   var brush = d3.brushX()
-      .extent([[0, 0], [width, height2]])
+      .extent([[0, 0], [width-margin.right, height2]])
       .on("start brush end", brushed);
 
   var zoom = d3.zoom()
@@ -435,7 +444,6 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
         var s = d3.event.selection || x_time2.range();
         x_time.domain(
-
           s.map(x_time2.invert, x_time2)
         );
         //g.select(".area").attr("d", area);
