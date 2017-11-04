@@ -1,22 +1,10 @@
 //drawer = function(data, indata){
-  var margin = {top: 10, right: 40, bottom: 10, left: 40},
-      margin2 = {top: 10, right: 40, bottom: 0, left: 40},
-      width = 800 - margin.left - margin.right,
-      height = 350 - margin.top - margin.bottom,
-      height2 = 70 -margin2.top -margin2.bottom,
-      svg = d3.select(".plot")
-                 .append("svg")
-                 .attr("preserveAspectRatio", "xMinYMin meet")
-                 .attr("viewBox","0 5 " + (width + 50)  + " " + (height + 50))
-                   //class to make it responsive
-                 .classed("svg-content-responsive", true);
-
-     svg2 = d3.select(".plot")
-                .append("svg")
-                .attr("preserveAspectRatio", "xMinYMin meet")
-                .attr("viewBox","0 5 " + (width + 50)  + " " + (height2 + 50))
-                  //class to make it responsive
-                .classed("svg-content-responsive", true);
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 110, left: 40},
+    margin2 = {top: 430, right: 20, bottom: 30, left: 40},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
+    height2 = +svg.attr("height") - margin2.top - margin2.bottom;
 
     tool_tip = d3.tip()
       .attr("class", "d3-tip")
@@ -257,8 +245,18 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   var y = d3.scaleLinear()
       .rangeRound([height, 0]);
 
-  var context = svg2.append("g")
-      .attr("class", "container")
+  svg.append("defs").append("clipPath")
+      .attr("id", "clip")
+    .append("rect")
+      .attr("width", width)
+      .attr("height", height);
+
+  var focus = svg.append("g")
+      .attr("class", "focus")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var context = svg.append("g")
+      .attr("class", "context")
       .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
 
@@ -276,7 +274,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 // skapa brush och zoom
   var brush = d3.brushX()
       .extent([[0, 0], [width, height2]])
-      .on("start brush end", brushed);
+      .on("brush end", brushed);
 
   var zoom = d3.zoom()
       .scaleExtent([1, Infinity])
@@ -290,12 +288,6 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
       .attr("height", height)
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .call(zoom);
-
-  var g = svg.append("g")
-      .attr("class", "container")
-      .attr("transform", "translate(" + margin.left+ "," + margin.top + ")");
-
-
   //g.append("g")
   //    .attr("class", "axis axis--x")
   //    .attr("transform", "translate(0," + height + ")")
@@ -322,7 +314,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   // gridlines in y axis function
   function make_x_gridlines() {
       return d3.axisTop(x_time)
-          .ticks(10)
+          .ticks(5)
   }
 
   function make_x_gridlines2() {
@@ -331,7 +323,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   }
 
   // add the X gridlines
-  g.append("g")
+  focus.append("g")
     .attr("class", "grid")
     .attr("transform", "translate(0," + height + ")")
     .call(make_x_gridlines()
@@ -358,7 +350,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
     );
 
 
-  var index = g.selectAll(".index")
+  var index = focus.selectAll(".index")
   .data(indexes)
   .enter().append("g")
     .attr("class", "index");
@@ -390,7 +382,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         }
       });
 
-    g.selectAll(".lines")
+    focus.selectAll(".lines")
         .data(linedata)
         .enter()
         .append("line")
@@ -413,8 +405,9 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
       .style("stroke-dasharray", "1,1")
       .style("stroke-width", "1")
 
-    var cell = g.append("g")
+    var cell = focus.append("g")
         .attr("class", "cells")
+        .attr("clip-path", "url(#clip)")
       .selectAll("g")
       .data(pointdata)
       .enter().append("g");
@@ -459,12 +452,12 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         d3.selectAll("circle").attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
 
-        g.selectAll(".indexline").attr("d", function(d) { return line(d.values); })
-        g.select(".grid").call(make_x_gridlines()
+        focus.selectAll(".indexline").attr("d", function(d) { return line(d.values); })
+        focus.select(".grid").call(make_x_gridlines()
             .tickSize(height- margin.top)
             //.tickFormat(".3")
         )
-        d3.select(".grid").selectAll(".domain").remove();
+        //d3.select(".grid").selectAll(".domain").remove();
         d3.select(".grid").selectAll(".tick").selectAll("line")
           .style("stroke-dasharray", "1,1")
           .style("stroke-width", "1");
@@ -494,17 +487,17 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         d3.selectAll("circle").attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
 
-        g.selectAll(".indexline").attr("d", function(d) { return line(d.values); })
-        g.select(".grid").call(make_x_gridlines()
+        focus.selectAll(".indexline").attr("d", function(d) { return line(d.values); })
+        focus.select(".grid").call(make_x_gridlines()
             .tickSize(height- margin.top)
             //.tickFormat(".3")
         );
-        d3.select(".grid").selectAll(".domain").remove();
+        //d3.select(".grid").selectAll(".domain").remove();
         d3.select(".grid").selectAll(".tick").selectAll("line")
           .style("stroke-dasharray", "1,1")
           .style("stroke-width", "1");
 
-        //context.select(".brush").call(brush.move, x_time.range().map(t.invertX, t));
+        context.select(".brush").call(brush.move, x_time.range().map(t.invertX, t));
       }
 
 

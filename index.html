@@ -79,6 +79,7 @@
   stroke: steelblue;
   stroke-width: 1px;
   opacity: 0.3;
+  clip-path: url(#clip);
 }
 
 .zoom {
@@ -101,6 +102,7 @@
 </head>
 
 <body>
+  <svg width="960" height="500"></svg>
   <div class = "plot col-md-8 col-md-offset-2"> </div>
     <script>
       data = [{id:"aa", value:3},
