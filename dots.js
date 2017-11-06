@@ -214,7 +214,12 @@ var svg = d3.select("svg"),
     d.date = parseTime(d.date);
   })
 
-  var indexes = ["Allra_Strategi_Lagom", "Allra_Strategi_Modig", "Handelsbanken_Global"].map(function(id) {
+  var indexes = [
+  "Allra_Strategi_Lagom",
+  //"Allra_Strategi_Modig",
+  //"Handelsbanken_Global",
+  //"OMXS",
+  "S&P500"].map(function(id) {
     return {
       id: id,
       values: indexdata.map(function(d) {
@@ -303,6 +308,14 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 
   for (var i = 0; i <100; ++i) simulation.tick();
 
+//  var simulation2 = d3.forceSimulation(eventdata)
+//      .force("x", d3.forceX(function(d) { return x_time2(d.date); }).strength(1))
+//      .force("y", d3.forceY(height / 4))
+//      .force("collide", d3.forceCollide(21))
+//      .stop();
+//
+//  for (var i = 0; i <100; ++i) simulation2.tick();
+
 
 
 
@@ -328,6 +341,15 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         return d.data;
       }
     )
+
+//    var pointdata2 = d3.voronoi()
+//        .extent([[-margin2.left, -margin2.top], [width + margin2.right, height2 + margin2.top]])
+//        .x(function(d) { return d.x; })
+//        .y(function(d) { return d.y; })
+//      .polygons(eventdata).map(function(d){
+//        return d.data;
+//      }
+//    )
 
   // gridlines in y axis function
   function make_x_gridlines() {
@@ -382,7 +404,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
       .attr("class", "indexline")
       .attr("d", function(d) { return line(d.values); })
       .style("stroke", function(d) {
-        if(d.id == "Handelsbanken_Global"){
+        if(d.id == "S&P500"){
         return "3498db";
        } else {
           return "#e74c3c";
@@ -393,7 +415,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
       .attr("class", "indexline")
       .attr("d", function(d) { return line2(d.values); })
       .style("stroke", function(d) {
-        if(d.id == "Handelsbanken_Global"){
+        if(d.id == "S&P500"){
         return "3498db";
        } else {
           return "#e74c3c";
@@ -430,6 +452,13 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
       .data(pointdata)
       .enter().append("g");
 
+//    var cell2 = context.append("g")
+//        .attr("class", "cells")
+//        //.attr("clip-path", "url(#clip)")
+//      .selectAll("g")
+//      .data(pointdata2)
+//      .enter().append("g");
+
     //cell.append("path")
     //    .attr("d", function(d) { return "M" + d.join("L") + "Z"; });
     cell.append("circle")
@@ -448,7 +477,16 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         .on('mouseout', tool_tip.hide)
         .on("click", function(d){window.open(d.sourcelink)});
 
-
+  //  cell2.append("circle")
+  //      .attr("r", 6)
+  //      .attr("fill", "red")
+  //      //.attr("cy", 1000)
+  //      //.transition()
+  //      //.delay(1000)
+  //      //.duration(1500)
+  //      .attr("class", "blobs")
+  //      .attr("cx", function(d) { return d.x; })
+  //      .attr("cy", function(d) { return d.y; })
 
 
       //cell.append("title")
@@ -470,7 +508,10 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
 
         for (var i = 0; i < 100; ++i) simulation.tick();
 
-        d3.selectAll("circle").attr("cx", function(d) { return d.x; })
+        d3.selectAll("circle")
+            //.transition(1000)
+            .attr("cx", function(d) { return d.x; })
+            .transition(2500)
             .attr("cy", function(d) { return d.y; });
 
         focus.selectAll(".indexline").attr("d", function(d) { return line(d.values); })
@@ -505,7 +546,10 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         //g.select(".axis--x").call(xAxis);
         //cell.attr("cx", function(d) { return d.x; })
         //    .attr("cy", function(d) { return d.y; });
-        d3.selectAll("circle").attr("cx", function(d) { return d.x; })
+        d3.selectAll("circle")
+            //.transition(1000)
+            .attr("cx", function(d) { return d.x; })
+            .transition(2500)
             .attr("cy", function(d) { return d.y; });
 
         focus.selectAll(".indexline").attr("d", function(d) { return line(d.values); })

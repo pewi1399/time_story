@@ -1,0 +1,11 @@
+\documentclass{article}
+
+\begin{document}
+\author{Per Wikman}
+\title{Part 2}
+%\email{per.wikman@moralformedlingen.se}
+\maketitle
+\section{Mass-Exchanges}
+
+
+\end{document}

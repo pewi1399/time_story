@@ -47,12 +47,39 @@ if(FALSE){
   dat <- readRDS("data/allra_kurs.rds")
 }
 
+
 dat$given_name <- ifelse(dat$Fondnummer == 250340, "Allra_Strategi_Modig",
                          ifelse(dat$Fondnummer == 286179 , "Allra_Strategi_Lagom", "Handelsbanken_Global"
                          )
                          )
 
 dat$price <- as.numeric(dat$Fondkurs.sälj)
+
+# read in alternative indeces
+omxs <- read.csv("Data/OMXS.csv", stringsAsFactors = FALSE)
+omxs <-
+  omxs %>% 
+  select(Datum, Senaste) %>% 
+  rename(price = Senaste) %>% 
+  mutate(
+        given_name = "OMXS",
+        price = gsub("\\.", "", price),
+        price = as.numeric(gsub(",", "\\.", price))
+         )
+
+sp <- read.csv("Data/SP500.csv", stringsAsFactors = FALSE)
+sp <-
+  sp %>% 
+  select(Datum, Senaste) %>% 
+  rename(price = Senaste) %>% 
+  mutate(
+    given_name = "S&P500",
+    price = gsub("\\.", "", price),
+    price = as.numeric(gsub(",", "\\.", price))
+  )
+
+dat <- bind_rows(dat, omxs)
+dat <- bind_rows(dat, sp)
 
 dat <- 
   dat %>% 
@@ -62,13 +89,15 @@ dat <-
 # pick an index date (the first) 
 indexdate <- 
   dat %>% 
-  filter(as.Date(Datum) >= as.Date("2011-09-01")) %>% 
+  #filter(as.Date(Datum) >= as.Date("2011-09-01")) %>% 
+  filter(as.Date(Datum) >= as.Date("2012-10-31")) %>% 
   filter(!duplicated(given_name)) %>%
   select(given_name, price) %>% 
   rename(min_price = price)
 
 plot_data <- merge(dat, indexdate, by = "given_name") %>% 
-  filter(as.Date(Datum) >= as.Date("2011-09-01")) %>% 
+  #filter(as.Date(Datum) >= as.Date("2011-09-01")) %>% 
+  filter(as.Date(Datum) >= as.Date("2012-10-31")) %>% 
   mutate(index = (price/min_price)*100,
          Date = as.Date(Datum)
          )
