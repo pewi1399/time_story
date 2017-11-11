@@ -54,7 +54,7 @@ var svg = d3.select("svg"),
      .attr("width", 1)
      .attr("height", 1)
      .append("svg:image")
-     .attr("xlink:href", "images/kammarratten.PNG")
+     .attr("xlink:href", "images/kammarratten.png")
      .attr("width", 60)
      .attr("height", 60)
      .attr("x", -6)
@@ -77,7 +77,7 @@ var svg = d3.select("svg"),
      .attr("width", 1)
      .attr("height", 1)
      .append("svg:image")
-     .attr("xlink:href", "images/pensionsmyndigheten.PNG")
+     .attr("xlink:href", "images/pensionsmyndigheten.png")
      .attr("width", 60)
      .attr("height", 60)
      .attr("x", -5)
@@ -88,7 +88,7 @@ var svg = d3.select("svg"),
      .attr("width", 1)
      .attr("height", 1)
      .append("svg:image")
-     .attr("xlink:href", "images/kronofogden.PNG")
+     .attr("xlink:href", "images/kronofogden.png")
      .attr("width", 40)
      .attr("height", 40)
      .attr("x", -0)
@@ -389,6 +389,40 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
     ]
     );
 
+  var legend = context.append("g")
+    .attr("class", "legend")
+
+  legend.selectAll(".legendlines")
+  .data(["S&P500", "Allra"])
+  .enter()
+  .append("line")
+  .attr("class", "legendlines")
+  .style("opacity", 0.5)
+  .style("stroke-width", 1)
+  .style("stroke-linecap", "round")
+  .style("shape-rendering", "geometricPrecision")
+  .attr("x1", 0)
+  .attr("y1", function(d,i) {return i *10;})
+  .attr("x2", 20)
+  .attr("y2", function(d,i) {return i*10;})
+  .style("stroke", function(d) {
+    if(d == "S&P500"){
+    return "3498db";
+   } else {
+      return "#e74c3c";
+    }
+  });
+
+  legend.selectAll(".legendtexts")
+  .data(["S&P500", "Allra"])
+  .enter()
+  .append("text")
+  .attr("class", "legendtexts")
+  .attr("x", 22)
+  .attr("font-size", 8)
+  .attr("y", function(d,i) {return 3+i*10;})
+  .text(function(d){return d;})
+
 
   var index = focus.selectAll(".index")
   .data(indexes)
@@ -422,19 +456,19 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
         }
       });
 
-    focus.selectAll(".lines")
-        .data(linedata)
-        .enter()
-        .append("line")
-        .style("stroke", function(d){ return d.color;})
-        .style("opacity", 1)
-        .style("stroke-width", 9)
-        .style("stroke-linecap", "round")
-        .style("shape-rendering", "geometricPrecision")
-        .attr("x1", function(d) {return x(d.start);})
-        .attr("y1", function(d) {return y((d.offset-2)/5 + 2);})
-        .attr("x2", function(d) {return x(d.stop);})
-        .attr("y2", function(d) {return y((d.offset-2)/5 + 2);});
+  //  focus.selectAll(".lines")
+  //      .data(linedata)
+  //      .enter()
+  //      .append("line")
+  //      .style("stroke", function(d){ return d.color;})
+  //      .style("opacity", 1)
+  //      .style("stroke-width", 9)
+  //      .style("stroke-linecap", "round")
+  //      .style("shape-rendering", "geometricPrecision")
+  //      .attr("x1", function(d) {return x(d.start);})
+  //      .attr("y1", function(d) {return y((d.offset-2)/5 + 2);})
+  //      .attr("x2", function(d) {return x(d.stop);})
+  //      .attr("y2", function(d) {return y((d.offset-2)/5 + 2);});
 
 
 
