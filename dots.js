@@ -182,6 +182,17 @@ var svg = d3.select("svg"),
      .attr("x", -0)
      .attr("y", -0);
 
+   defs.append('pattern')
+     .attr("id", "fondservice")
+     .attr("width", 1)
+     .attr("height", 1)
+     .append("svg:image")
+     .attr("xlink:href", "images/svensk_fondservice.jpg")
+     .attr("width", 40)
+     .attr("height", 40)
+     .attr("x", -0)
+     .attr("y", -0);
+
   var formatValue = d3.format(",d");
 
   var x = d3.scaleLinear()
@@ -301,7 +312,7 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
   y.domain(d3.extent(linedata, function(d) { return d.offset; }));
 
   var simulation = d3.forceSimulation(eventdata)
-      .force("x", d3.forceX(function(d) { return x_time(d.date); }).strength(1))
+      .force("x", d3.forceX(function(d) { return x_time(d.date); }).strength(0.5))
       .force("y", d3.forceY(height / 2))
       .force("collide", d3.forceCollide(21))
       .stop();
@@ -384,8 +395,8 @@ d.values = d.values.filter(function(d){return typeof d != "undefined"})
     .call(brush)
     //.call(brush.move, [0, 300])
     .call(brush.move, [
-      x_time2(parseTime("2017-01-20")),
-      x_time2(parseTime("2017-05-01"))
+      x_time2(parseTime("2016-10-01")),
+      x_time2(parseTime("2017-11-20"))
     ]
     );
 

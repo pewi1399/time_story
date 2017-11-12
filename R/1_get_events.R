@@ -4,7 +4,7 @@ library(openxlsx)
 library(ggplot2)
 library(tidyr)
 
-events <- openxlsx::read.xlsx("data/Exempel_case_allra.xlsx", sheet = 1)
+events <- openxlsx::read.xlsx("data/allra_dates.xlsx", sheet = 1)
 
 out <- 
 events %>% 
